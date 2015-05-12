@@ -37,7 +37,7 @@ for more information, please refer to [doc](http://www.imagemagick.org/script/co
 $ sudo docker run -v /YOUR_HOST_PATH:/THIS_PATH_WILL_BE_QINIU_KEY \
   -e QINIU_BUCKET_NAME=xxx \
   -e QINIU_SECRET_KEY=yyy \
-  -e QINIU_ACCESS_KEY=zzz-4jkG4n5kro \
+  -e QINIU_ACCESS_KEY=zzz \
   -e DOC_PATH=/THIS_PATH_WILL_BE_QINIU_KEY/SOMETHING-LIKE-UUID-TO-BE-A-KEY \
   doc-convertor node uploader.js
 ```
