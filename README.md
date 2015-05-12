@@ -1,7 +1,7 @@
 docker-pdf-convertor
 ====================
 
-With libre office installed on CentOS, and also can upload to qiniu cloud stoarge.
+With libre office installed on CentOS, and also can upload to qiniu cloud storage.
 
 # How to use
 
