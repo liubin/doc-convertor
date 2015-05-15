@@ -1,9 +1,8 @@
-docker-pdf-convertor
+doc-convertor
 ====================
+本镜像预安装了CentOS 7 和LibreOffice，以及Node.js，能将Office文档转换为PDF文件以及png图片，并上传到七牛云存储。
 
-With libre office installed on CentOS, and also can upload to qiniu cloud storage.
-
-# How to use
+# 使用方法
 
 ## Build Image
 
@@ -11,27 +10,27 @@ With libre office installed on CentOS, and also can upload to qiniu cloud storag
 sudo docker build -t doc-convertor .
 ```
 
-## Convert office documents to pdf files.
+## 将Offcie文档转换为Pdf文件
 
-Since libreoffice is installed, you can use it directly.
+由于镜像内已经安装了LibreOffice，可以直接使用`libreoffice`命令进行文档转换。
 
 ```
 sudo docker run  -v /YOUR_HOST_PATH/:/tmp doc-convertor libreoffice  \
 --headless --convert-to pdf /tmp/SOME_OFFICE_FILE --outdir /tmp
 ```
 
-Where `YOUR_HOST_PATH` is somewhere your file located in your host filesystem, and `SOME_OFFICE_FILE` is the office file name.
+其中`YOUR_HOST_PATH`是宿主机的文件夹路径，而`SOME_OFFICE_FILE`则是要转换的文件名（已经被映射到了容器的/tmp下）。
 
-## Convert pdf file to image files.
+## 将Pdf文件转换为图像
 
 ```
 $ sudo docker run -v /YOUR_HOST_PATH:/tmp doc-convertor convert /tmp/SOME.PDF /tmp/test-%02d.png
 ```
 
-for more information, please refer to [doc](http://www.imagemagick.org/script/command-line-processing.php)
+该命令的详细说明请参看[这里的文档](http://www.imagemagick.org/script/command-line-processing.php)
 
 
-## Conver tp pngs and upload to qiniu
+## 一站式解决方案
 
 ```
 $ sudo docker run -v /YOUR_HOST_PATH:/THIS_PATH_WILL_BE_QINIU_KEY \
@@ -42,9 +41,9 @@ $ sudo docker run -v /YOUR_HOST_PATH:/THIS_PATH_WILL_BE_QINIU_KEY \
   doc-convertor node uploader.js
 ```
 
-And this will convert files under `/YOUR_HOST_PATH` and upload them and the generated png files to qiniu, the key prefix will be the path mapped in the container `/THIS_PATH_WILL_BE_QINIU_KEY`.
+该方法会将宿主机`/YOUR_HOST_PATH`下的文档转换为Pdf及图像后，并上传到七牛云存储。如果`QINIU_`开头的环境变量没有设置，则会略过上传步骤。上传到七牛时的key（即对象标识符）为容器内该文件的full path`/THIS_PATH_WILL_BE_QINIU_KEY`。
 
-The output likes:
+输出类似下面这样:
 
 ```
 page_count: 8
@@ -60,12 +59,10 @@ page_count: 8
 /app2/temp/d.pdf: FrROdUt5aXhE9rXTnMzoCHg8xqTe
 ```
 
-The rules are:
+文件名映射规则为:
 
-* original file is d.docx;
-* pdf file will be d.pdf;
-* png file will be d-%03d.png, you can change this by modify the code;
-* page_count is the total pages, by counting the png files' count;
-* uploaded file will be output by key: hash format.
-
-
+* 假设原文件名d.docx；
+* 则pdf文件名为d.pdf，扩展名会替换为pdf；
+* png文件默认采`d-%03d.png`这种形式，即加上了000,001这样的后缀；
+* page_count是总页数，这是通过计算png文件数量实现的；
+* 如果文件被上传到了七牛，则会输出`key: hash`。
